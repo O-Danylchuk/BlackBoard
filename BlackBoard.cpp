@@ -31,8 +31,16 @@ void BlackBoard::display() const {
 }
 
 void BlackBoard::drawFigure(Figure::FigureType type, std::pair<int, int>& position, int firstVal, int secondVal) {
+    if (position.first < 0 || position.first >= m_width || position.second < 0 || position.second >= m_height) {
+        std::cout << "Invalid position" << std::endl;
+        return;
+    }
     if (type == Figure::FigureType::Circle) {
         int radius = firstVal;
+        if (radius <= 0 || radius > m_width || radius > m_height) {
+            std::cout << "Invalid radius" << std::endl;
+            return;
+        }
         int centerX = position.first;
         int centerY = position.second;
 
@@ -75,6 +83,17 @@ void BlackBoard::drawFigure(Figure::FigureType type, std::pair<int, int>& positi
                 }
             }
             std::cout << std::endl;
+        }
+    } else if (type == Figure::FigureType::Line) {
+        int length = firstVal;
+        int startX = position.first;
+        int startY = position.second;
+        for (int x = 0; x < length; ++x) {
+            int drawX = startX + x;
+            int drawY = startY;
+            if (drawX >= 0 && drawX < m_width && drawY >= 0 && drawY < m_height) {
+                m_board[drawY][drawX] = '*';
+            }
         }
     } else {
         std::cout << "Invalid figure type (this should never happen )" << std::endl;
