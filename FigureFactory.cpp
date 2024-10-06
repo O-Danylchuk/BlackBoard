@@ -1,4 +1,5 @@
 #include "FigureFactory.h"
+#include <iostream>
 #include "Figure.h"
 #include "Circle.h"
 #include "Square.h"
@@ -6,20 +7,17 @@
 #include <stdexcept>
 #include <memory>
 #include <utility>
+#include <iostream>
 
-void FigureFactory::createFigure(Figure& figure, Figure::FigureType type, std::pair<int, int>& position) {
+std::unique_ptr<Figure> FigureFactory::createFigure(Figure::FigureType type, std::pair<int, int>& position, int firstVal, int secondVal) {
     switch (type) {
         case Figure::FigureType::Circle:
-            figure = Circle(position, 10);
-            break;
+            return std::make_unique<Circle>(position, firstVal);
         case Figure::FigureType::Square:
-            figure = Square(position, 10, 10);
-            break;
+            return std::make_unique<Square>(position, firstVal);
         case Figure::FigureType::Triangle:
-            figure = Triangle(position, 10, 10);
-            break;
+            return std::make_unique<Triangle>(position, firstVal, secondVal);  
         default:
             throw std::invalid_argument("Invalid figure type");
     }
 }
-

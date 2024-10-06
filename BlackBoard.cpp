@@ -3,6 +3,7 @@
 #include "Circle.h"
 #include "Square.h"
 #include "Triangle.h"
+#include "Line.h"
 #include <fstream>
 
 
@@ -35,6 +36,37 @@ void BlackBoard::drawFigure(Figure::FigureType type, std::pair<int, int>& positi
         std::cout << "Invalid position" << std::endl;
         return;
     }
+    // Check if the spot is already occupied by the same type of figure
+    for (const auto& figure : m_figures) {
+        if (figure->type == type) {
+            if (type == Figure::FigureType::Circle) {
+                Circle* circle = dynamic_cast<Circle*>(figure.get());
+                if (circle && circle->getPosition() == position) {
+                    std::cout << "A circle with the same parameters already exists at this position." << std::endl;
+                    return;
+                }
+            } else if (type == Figure::FigureType::Square) {
+                Square* square = dynamic_cast<Square*>(figure.get());
+                if (square && square->getPosition() == position) {
+                    std::cout << "A square with the same parameters already exists at this position." << std::endl;
+                    return;
+                }
+            } else if (type == Figure::FigureType::Triangle) {
+                Triangle* triangle = dynamic_cast<Triangle*>(figure.get());
+                if (triangle && triangle->getPosition() == position) {
+                    std::cout << "A triangle with the same parameters already exists at this position." << std::endl;
+                    return;
+                }
+            } else if (type == Figure::FigureType::Line) {
+                Line* line = dynamic_cast<Line*>(figure.get());
+                if (line && line->getPosition() == position) {
+                    std::cout << "A line with the same parameters already exists at this position." << std::endl;
+                    return;
+                }
+            }
+        }
+    }
+
     if (type == Figure::FigureType::Circle) {
         int radius = firstVal;
         if (radius <= 0 || radius > m_width || radius > m_height) {
@@ -186,17 +218,25 @@ void BlackBoard::load(const std::string& filePath) {
     if (file.is_open()) {
         std::string line;
         int i = 0;
+        bool isValid = true;
         while (std::getline(file, line)) {
-            if (i < m_height) {
-                for (int j = 0; j < m_width; ++j) {
-                    m_board[i][j] = line[j];
-                }
-                ++i;
-            } else {
+            if (i >= m_height || line.length() != m_width) {
+                isValid = false;
                 break;
             }
+            for (int j = 0; j < m_width; ++j) {
+                m_board[i][j] = line[j];
+            }
+            ++i;
+        }
+        if (i != m_height) {
+            isValid = false;
         }
         file.close();
+        if (!isValid) {
+            std::cout << "Invalid board dimensions in file" << std::endl;
+            clearBoard();
+        }
     } else {
         std::cout << "Unable to open file" << std::endl;
     }

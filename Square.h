@@ -6,7 +6,7 @@ class Square : public Figure
 {
 private:
     std::pair<int, int> m_position;
-    FigureType type;
+    FigureType m_type;
     int m_height;
     int m_width;
 public:

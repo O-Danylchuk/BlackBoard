@@ -9,6 +9,7 @@ private:
     std::pair<int, int> m_position;
     int m_height;
     int m_base;
+    FigureType m_type;
 public:
     Triangle(const std::pair<int, int>& position, int height, int base);
     ~Triangle() override = default;

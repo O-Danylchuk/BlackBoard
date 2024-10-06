@@ -7,8 +7,11 @@
 class FigureFactory
 {
 public:
-    void createFigure(Figure& figure, Figure::FigureType type, std::pair<int, int>& position);
+    std::unique_ptr<Figure> createFigure(Figure::FigureType type, std::pair<int, int>& position, int firstVal, int secondVal = 0);
+    std::vector<std::string> getSupportedShapes() const {
+        return { "Circle, (Coordinates, Radius)", "Square, (Coordinates, height)", "Triangle, (Coordinates, height, base)" };
+    }
     ~FigureFactory() {}
 private:
-    std::vector<std::unique_ptr<Figure>> figures;
+    std::vector<std::unique_ptr<Figure>> m_figures;
 };

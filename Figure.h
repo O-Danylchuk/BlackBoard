@@ -1,27 +1,27 @@
 #pragma once
+#include <utility>
 
 class Figure
 {
 protected:
-    std::pair<int, int> position;
+    std::pair<int, int> m_position;
 
 public:
-    Figure(const std::pair<int, int>& position) : position(position) {}
+    Figure() = default;
+
+    Figure(const std::pair<int, int>& position);
 
     virtual ~Figure() = default;
 
-    virtual void draw() = 0;
-
-    virtual void move(int x, int y)
-    {
-        position.first = x;
-        position.second = y;
-    }
+    virtual void move(int x, int y) = 0;
 
     enum class FigureType 
     {
         Circle,
         Square,
-        Triangle
+        Triangle,
+        Line
     };
+    
+    FigureType type;
 };
