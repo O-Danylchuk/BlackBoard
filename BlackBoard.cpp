@@ -3,6 +3,7 @@
 #include "Circle.h"
 #include "Square.h"
 #include "Triangle.h"
+#include <fstream>
 
 
 BlackBoard::BlackBoard(int height, int width) : m_height(height), m_width(width), m_board(height, std::vector<char>(width, ' ')) {}
@@ -76,7 +77,7 @@ void BlackBoard::drawFigure(Figure::FigureType type, std::pair<int, int>& positi
             std::cout << std::endl;
         }
     } else {
-        std::cout << "Invalid figure type" << std::endl;
+        std::cout << "Invalid figure type (this should never happen )" << std::endl;
     }
 }
 
@@ -120,5 +121,64 @@ void BlackBoard::listFigures() {
             default:
                 break;
         }
+    }
+}
+
+void BlackBoard::undoLastFigure() {
+    if (!m_figures.empty()) {
+        m_figures.pop_back();
+        clearBoard();
+        for (const auto& figure : m_figures) {
+            if (figure->type == Figure::FigureType::Circle) {
+                Circle* circle = dynamic_cast<Circle*>(figure.get());
+                std::pair<int, int> position = circle->getPosition();
+                drawFigure(figure->type, position, circle->getRadius(), 0);
+            } else if (figure->type == Figure::FigureType::Square) {
+                Square* square = dynamic_cast<Square*>(figure.get());
+                std::pair<int, int> position = square->getPosition();
+                drawFigure(figure->type, position, square->getHeight(), square->getWidth());
+            } else if (figure->type == Figure::FigureType::Triangle) {
+                Triangle* triangle = dynamic_cast<Triangle*>(figure.get());
+                std::pair<int, int> position = triangle->getPosition();
+                drawFigure(figure->type, position, triangle->getHeight(), 0);
+            }
+        }
+    }
+}
+
+void BlackBoard::save(const std::string& filePath) {
+    std::ofstream file(filePath);
+    if (file.is_open()) {
+        for (int i = 0; i < m_height; ++i) {
+            for (int j = 0; j < m_width; ++j) {
+                file << m_board[i][j];
+            }
+            file << std::endl;
+        }
+        file.close();
+    } else {
+        std::cout << "Unable to open file" << std::endl;
+    }
+}
+
+void BlackBoard::load(const std::string& filePath) {
+    clearBoard();
+    std::ifstream file(filePath);
+    if (file.is_open()) {
+        std::string line;
+        int i = 0;
+        while (std::getline(file, line)) {
+            if (i < m_height) {
+                for (int j = 0; j < m_width; ++j) {
+                    m_board[i][j] = line[j];
+                }
+                ++i;
+            } else {
+                break;
+            }
+        }
+        file.close();
+    } else {
+        std::cout << "Unable to open file" << std::endl;
     }
 }

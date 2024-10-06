@@ -14,6 +14,9 @@ public:
     void listFigures();
     void addFigure(std::unique_ptr<Figure>& figure);
     void drawFigure(Figure::FigureType type, std::pair<int, int>& position, int firstVal, int secondVal);
+    void undoLastFigure();
+    void save(const std::string& filePath);
+    void load(const std::string& filePath);
 private:
     int m_height;
     int m_width;
