@@ -9,6 +9,7 @@ private:
     FigureType m_type;
     int m_height;
     int m_width;
+    int m_id;
 public:
     Square(const std::pair<int, int>& position, int height);
     ~Square() override = default;

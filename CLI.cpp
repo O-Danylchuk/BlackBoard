@@ -11,6 +11,10 @@ FigureFactory figureFactory;
 const std::unordered_map<std::string, CLI::Command> CLI::m_commandsMap = {
     {"draw", Command::draw},
     {"list", Command::list},
+    {"move", Command::move},
+    {"select", Command::select},
+    {"edit", Command::edit},
+    {"paint", Command::paint},
     {"shapes", Command::shapes},
     {"add", Command::add},
     {"undo", Command::undo},
@@ -33,8 +37,8 @@ CLI::Command CLI::parseCommand(const std::string& commandStr) {
 
 void CLI::executeCommand(const CLI::Command& command) {
     std::stringstream ss(m_userInput);
-    std::string fWord, figureType, filePath;
-    int x, y, firstVal, secondVal;
+    std::string fWord, type, filePath, color;
+    int x, y, firstVal, secondVal, ID;
     switch (command) {        
         case Command::draw:
         {
@@ -56,22 +60,43 @@ void CLI::executeCommand(const CLI::Command& command) {
         }
         case Command::add: 
         {
-            ss >> fWord >> figureType >> x >> y >> firstVal >> secondVal;
+            ss >> fWord >> color >> type >> x >> y >> firstVal >> secondVal;
             std::pair<int, int> position = std::make_pair(x, y);
-            Figure::FigureType type;
-            if (figureType == "circle") {
-                type = Figure::FigureType::Circle;
-            } else if (figureType == "square") {
-                type = Figure::FigureType::Square;
-            } else if (figureType == "triangle") {
-                type = Figure::FigureType::Triangle;
+            Figure::FigureType figureType;
+            Figure::Color figureColor;
+            if (type == "circle") {
+                figureType = Figure::FigureType::Circle;
+            } else if (type == "square") {
+                figureType = Figure::FigureType::Square;
+            } else if (type == "triangle") {
+                figureType = Figure::FigureType::Triangle;
+            } else if (type == "line") {
+                figureType = Figure::FigureType::Line;
             } else {
                 std::cout << "Invalid figure type" << std::endl;
                 break;
             }
-            std::unique_ptr<Figure> figure = figureFactory.createFigure(type, position, firstVal, secondVal);   
-            board.addFigure(figure);
-            board.drawFigure(type, position, firstVal, secondVal);
+            if (color == "red") {
+                figureColor = Figure::Color::Red;
+            } else if (color == "green") {
+                figureColor = Figure::Color::Green;
+            } else if (color == "blue") {
+                figureColor = Figure::Color::Blue;
+            } else if (color == "yellow") {
+                figureColor = Figure::Color::Yellow;
+            } else if (color == "magenta") {
+                figureColor = Figure::Color::Magenta;
+            } else if (color == "cyan") {
+                figureColor = Figure::Color::Cyan;
+            } else if (color == "white") {
+                figureColor = Figure::Color::White;
+            } else {
+                std::cout << "Invalid color" << std::endl;
+                break;
+            }
+            std::unique_ptr<Figure> figure = figureFactory.createFigure(figureType, figureColor, position, firstVal, secondVal);  
+            board.addFigure(std::move(figure));
+            board.drawFigure(figureType, figureColor, position, firstVal, secondVal);
             break;
         }            
         case Command::undo:
@@ -106,6 +131,18 @@ void CLI::executeCommand(const CLI::Command& command) {
             help();
             break;
         }
+        case Command::move:
+        {
+            ss >> fWord >> ID >> x >> y;
+            board.moveFigure(ID, x, y);
+            break;
+        }
+        case Command::select:
+        {
+            ss >> fWord >> ID;
+            board.showSelected(ID);
+            break;
+        }
         default:
         {
             std::cout << "Invalid command" << std::endl;
@@ -133,6 +170,5 @@ void CLI::run() {
         std::getline(std::cin, m_userInput);
         fWord = m_userInput.substr(0, m_userInput.find(' '));
     }
-    std::cout << "Exiting..." << std::endl;
-    
+    std::cout << "Exiting..." << std::endl; 
 }

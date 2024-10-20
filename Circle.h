@@ -6,6 +6,7 @@ class Circle : public Figure
 {
 private:    
     int m_radius;
+    int m_id;
     std::pair<int, int> m_position;
     FigureType m_type;
 public:

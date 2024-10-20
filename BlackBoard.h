@@ -7,13 +7,15 @@ class BlackBoard
 {
 public:
     BlackBoard(int height, int width);
-    ~BlackBoard() = default;
+    ~BlackBoard();
 
     void display() const;
     void clearBoard();
+    void showSelected(int ID);
     void listFigures();
-    void addFigure(std::unique_ptr<Figure>& figure);
-    void drawFigure(Figure::FigureType type, std::pair<int, int>& position, int firstVal, int secondVal);
+    void addFigure(std::unique_ptr<Figure> figure);
+    void drawFigure(Figure::FigureType type, Figure::Color color, std::pair<int, int>& position, int firstVal, int secondVal);
+    void moveFigure(int ID, int x, int y);
     void undoLastFigure();
     void save(const std::string& filePath);
     void load(const std::string& filePath);
